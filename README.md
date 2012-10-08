@@ -22,6 +22,7 @@ i18n.load({
     }
   }
 })
+i18n.loadFile('path/to/your/files/en.lua') -- maybe load some more stuff from that file
 
 -- setting the translation context
 i18n.setContext('en')
