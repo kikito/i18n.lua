@@ -28,6 +28,13 @@ local function subArray(source, start, finish)
   return result
 end
 
+local function assertPresent(functionName, paramName, value)
+  if type(value) ~= 'string' or #value == 0 then
+    local msg = "i18n.%s requires a non-empty string on its %s. Got %s (a %s value)."
+    error(msg:format(functionName, paramName, tostring(value), type(value)))
+  end
+end
+
 local function parseArgs(param1, param2, ...)
   local args, length = dotSplit(param1)
   args[length + 1] = param2
@@ -36,8 +43,10 @@ end
 
 -- public stuff
 
-function i18n.set(...)
-  local node, args, length = store, parseArgs(...)
+function i18n.set(param1, param2, ...)
+  assertPresent('set', 'first parameter', param1)
+  assertPresent('set', 'second parameter', param2)
+  local node, args, length = store, parseArgs(param1, param2, ...)
   for i=1, length-2 do
     key = args[i]
     node[key] = node[key] or {}
@@ -47,8 +56,9 @@ function i18n.set(...)
   node[lastKey] = value
 end
 
-function i18n.get(...)
-  local node, args, length = store, parseArgs(...)
+function i18n.get(param1, ...)
+  assertPresent('get', 'first parameter', param1)
+  local node, args, length = store, parseArgs(param1, ...)
   local i = 1
   while i < length do
     node = node[args[i]]

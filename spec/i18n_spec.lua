@@ -31,6 +31,13 @@ describe('i18n', function()
       assert_equal('Hello Vegeta, your score is 9001', i18n('en.message', 'Vegeta', 9001))
     end)
 
+    it('checks that the first two parameters are non-empty strings', function()
+      assert_error(function() i18n.set("","") end)
+      assert_error(function() i18n.set("",1) end)
+      assert_error(function() i18n.set(1,1) end)
+      assert_error(function() i18n.set() end)
+    end)
+
   end)
 
 
