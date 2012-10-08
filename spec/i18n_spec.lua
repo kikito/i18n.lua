@@ -37,12 +37,35 @@ describe('i18n', function()
       assert_error(function() i18n.set(1,1) end)
       assert_error(function() i18n.set() end)
     end)
-
   end)
 
+  describe('set/getContext', function()
+    it("is split and parsed properly", function()
+      i18n.setContext('en', 'foo')
+      assert_equal('en.foo', i18n.getContext())
+      i18n.setContext('en.foo.bar')
+      assert_equal('en.foo.bar', i18n.getContext())
+      i18n.setContext()
+      assert_equal("", i18n.getContext())
+    end)
+
+    it("modifies set", function()
+      i18n.setContext('en')
+      i18n.set('foo','bar')
+      i18n.setContext()
+      assert_equal('bar', i18n('en.foo'))
+    end)
+
+    it("modifies get", function()
+      i18n.set('en','foo','bar')
+      i18n.setContext('en')
+      assert_equal('bar', i18n('foo'))
+    end)
+  end)
 
   describe('load', function()
-
   end)
+
+
 
 end)
