@@ -35,18 +35,32 @@ local function arrayCopy(source)
   return result, length
 end
 
+local function isPluralTable(t)
+  return type(t) == 'table' and type(t.one) == 'string' and type(t.other) == 'string'
+end
+
+local function isPresent(str)
+  return type(str) == 'string' and #str > 0
+end
+
 local function assertPresent(functionName, paramName, value)
-  if type(value) == 'string' and #value > 0 then return end
+  if isPresent(value) then return end
 
   local msg = "i18n.%s requires a non-empty string on its %s. Got %s (a %s value)."
   error(msg:format(functionName, paramName, tostring(value), type(value)))
 end
 
 local function assertPresentOrPlural(functionName, paramName, value)
-  if type(value) == 'string' and #value > 0 then return end
-  if type(value) == 'table' and type(value.one) == 'string' and type(value.other) == 'string' then return end
+  if isPresent(value) or isPluralTable(value) then return end
 
   local msg = "i18n.%s requires a non-empty string or plural-form table on its %s. Got %s (a %s value)."
+  error(msg:format(functionName, paramName, tostring(value), type(value)))
+end
+
+local function assertPresentOrTable(functionName, paramName, value)
+  if isPresent(value) or type(value) == 'table' then return end
+
+  local msg = "i18n.%s requires a non-empty string or table on its %s. Got %s (a %s value)."
   error(msg:format(functionName, paramName, tostring(value), type(value)))
 end
 
@@ -61,6 +75,7 @@ local function contextualizeArgs(args, length)
   return appendArray(newArgs, newLength, args, length)
 end
 
+
 local function interpolate(node, data)
   if type(node) == 'string' then
     return node:gsub("%%{(.-)}", function(w) return tostring(data[w]) end)
@@ -68,8 +83,23 @@ local function interpolate(node, data)
   -- else node is a pluralized form
   data = data or {}
   local count = data.count or 1
+  assertPresentOrPlural('<private>interpolate', 'node', node)
   node = count == 1 and node.one or node.other
   return interpolate(node, data)
+end
+
+local function recursiveLoad(currentContext, data)
+  local composedKey
+  for k,v in pairs(data) do
+    composedKey = currentContext .. '.' .. tostring(k)
+    assertPresent('load', composedKey, k)
+    assertPresentOrTable('load', composedKey, v)
+    if type(v) == 'string' or isPluralTable(v) then
+      i18n.set(composedKey, v)
+    else
+      recursiveLoad(composedKey, v)
+    end
+  end
 end
 
 -- public stuff
@@ -128,6 +158,24 @@ end
 function i18n.reset()
   store = {}
   i18n.setContext()
+end
+
+function i18n.load(data)
+  for k,v in pairs(data) do
+    assertPresent('load', k, k)
+    assertPresentOrTable('load', k, v)
+    if type(v) == 'string' or isPluralTable(v) then
+      i18n.set(k, v)
+    else
+      recursiveLoad(k, v)
+    end
+  end
+end
+
+function i18n.loadFile(path)
+  local chunk = assert(loadfile(path))
+  local data = chunk()
+  i18n.load(data)
 end
 
 setmetatable(i18n, {__call = function(_, ...) return i18n.get(...) end})

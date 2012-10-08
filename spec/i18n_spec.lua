@@ -61,6 +61,47 @@ describe('i18n', function()
     end)
   end)
 
+  describe('load', function()
+    it("loads a bunch of stuff", function()
+      i18n.load({
+        en = {
+          hello  = 'Hello!',
+          inter  = 'Your weight: %{weight}',
+          plural = {
+            one = "One thing",
+            other = "%{count} things"
+          }
+        },
+        es = {
+          hello  = '¡Hola!',
+          inter  = 'Su peso: %{weight}',
+          plural = {
+            one = "Una cosa",
+            other = "%{count} cosas"
+          }
+        }
+      })
+
+      assert_equal('Hello!', i18n('en.hello'))
+      assert_equal('Your weight: 5', i18n('en.inter', {weight = 5}))
+      assert_equal('One thing', i18n('en.plural', {count = 1}))
+      assert_equal('2 things', i18n('en.plural', {count = 2}))
+      assert_equal('¡Hola!', i18n('es.hello'))
+      assert_equal('Su peso: 5', i18n('es.inter', {weight = 5}))
+      assert_equal('Una cosa', i18n('es.plural', {count = 1}))
+      assert_equal('2 cosas', i18n('es.plural', {count = 2}))
+    end)
+  end)
+
+  describe('loadFile', function()
+    it("Loads a bunch of stuff", function()
+      i18n.loadFile('spec/en.lua')
+      assert_equal('Hello!', i18n('en.hello'))
+      local balance = i18n('en.balance', {value = 0})
+      assert_equal('Your account balance is 0.', balance)
+    end)
+  end)
+
   describe('set/getContext', function()
     it("is split and parsed properly", function()
       i18n.setContext('en', 'foo')
@@ -83,11 +124,20 @@ describe('i18n', function()
       i18n.setContext('en')
       assert_equal('bar', i18n('foo'))
     end)
+
+    it("modifies load", function()
+      i18n.setContext('en')
+      i18n.load({foo = 'Foo'})
+      i18n.setContext()
+      assert_equal('Foo', i18n('en.foo'))
+    end)
+
+    it("modifies loadFile", function()
+      i18n.setContext('foo')
+      i18n.loadFile('spec/en.lua')
+      i18n.setContext()
+      assert_equal('Hello!', i18n('foo.en.hello'))
+    end)
   end)
-
-  describe('load', function()
-  end)
-
-
 
 end)
