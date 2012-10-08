@@ -21,6 +21,11 @@ describe('i18n', function()
       assert_equal('hello!', i18n('en.message'))
     end)
 
+    it('only splits first param', function()
+      i18n.set('en.foo', 'bar.baz', "A message in en.foo['bar.baz']")
+      assert_equal("A message in en.foo['bar.baz']", i18n('en','foo','bar.baz'))
+    end)
+
     it('interpolates variables', function()
       i18n.set('en.message', 'Hello %s, your score is %d')
       assert_equal('Hello Vegeta, your score is 9001', i18n('en.message', 'Vegeta', 9001))

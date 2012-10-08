@@ -4,30 +4,20 @@ local store
 -- private stuff
 
 local function dotSplit(str)
-  if type(str) ~= 'string' then return {str}, 1 end
   local fields, length = {},0
-  str:gsub("[^%.]+", function(c)
+    str:gsub("[^%.]+", function(c)
     length = length + 1
     fields[length] = c
   end)
   return fields, length
 end
 
-local function addElements(destination, length, elements, eLength)
-  for i=1, eLength do
+local function addElements(destination, length, elements)
+  local elementsLength = #elements
+  for i=1, elementsLength do
     destination[length + i] = elements[i]
   end
-  return length + eLength
-end
-
-local function splitArgs(...)
-  local args, result, length = {...}, {}, 0
-  local fields, fLength
-  for _,str in ipairs(args) do
-    fields, fLength = dotSplit(str)
-    length = addElements(result, length, fields, fLength)
-  end
-  return result, length
+  return destination, length + elementsLength
 end
 
 local function subArray(source, start, finish)
@@ -38,10 +28,16 @@ local function subArray(source, start, finish)
   return result
 end
 
+local function parseArgs(param1, param2, ...)
+  local args, length = dotSplit(param1)
+  args[length + 1] = param2
+  return addElements(args, length + 1, {...})
+end
+
 -- public stuff
 
 function i18n.set(...)
-  local node, args, length = store, splitArgs(...)
+  local node, args, length = store, parseArgs(...)
   for i=1, length-2 do
     key = args[i]
     node[key] = node[key] or {}
@@ -52,12 +48,12 @@ function i18n.set(...)
 end
 
 function i18n.get(...)
-  local node, args, length = store, splitArgs(...)
+  local node, args, length = store, parseArgs(...)
   local i = 1
   while i < length do
     node = node[args[i]]
-    if type(node) == 'string' then break end
     if not node then return nil end
+    if type(node) == 'string' then break end
     i = i + 1
   end
   if i < length then
