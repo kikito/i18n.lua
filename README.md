@@ -15,7 +15,11 @@ i18n.set('en.welcome', 'Welcome to this program') -- same as above
 i18n.load({
   en = {
     good_bye = "Good-bye!",
-    messages = "You've got %d unread message(s)"
+    age_msg = "Your age is %{age}."
+    phone_msg = {
+      one = "You have one new message.",
+      other = "You have %{count} new messages."
+    }
   }
 })
 
@@ -24,7 +28,9 @@ i18n.setContext('en')
 
 -- getting translations
 i18n('welcome') -- Welcome to this program
-i18n('messages', 2) -- You've got 2 unread message(s)"
+i18n('age_msg', {age = 18}) -- Your age is 18.
+i18n('phone_msg', {count = 1}) -- You have one new message.
+i18n('phone_msg', {count = 2}) -- You have 2 new messages.
 i18n('good_bye') -- Good-bye!
 ```
 

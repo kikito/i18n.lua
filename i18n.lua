@@ -36,10 +36,18 @@ local function arrayCopy(source)
 end
 
 local function assertPresent(functionName, paramName, value)
-  if type(value) ~= 'string' or #value == 0 then
-    local msg = "i18n.%s requires a non-empty string on its %s. Got %s (a %s value)."
-    error(msg:format(functionName, paramName, tostring(value), type(value)))
-  end
+  if type(value) == 'string' and #value > 0 then return end
+
+  local msg = "i18n.%s requires a non-empty string on its %s. Got %s (a %s value)."
+  error(msg:format(functionName, paramName, tostring(value), type(value)))
+end
+
+local function assertPresentOrPlural(functionName, paramName, value)
+  if type(value) == 'string' and #value > 0 then return end
+  if type(value) == 'table' and type(value.one) == 'string' and type(value.other) == 'string' then return end
+
+  local msg = "i18n.%s requires a non-empty string or plural-form table on its %s. Got %s (a %s value)."
+  error(msg:format(functionName, paramName, tostring(value), type(value)))
 end
 
 local function parseArgs(param1, param2, ...)
@@ -53,12 +61,22 @@ local function contextualizeArgs(args, length)
   return appendArray(newArgs, newLength, args, length)
 end
 
+local function interpolate(node, data)
+  if type(node) == 'string' then
+    return node:gsub("%%{(.-)}", function(w) return tostring(data[w]) end)
+  end
+  -- else node is a pluralized form
+  data = data or {}
+  local count = data.count or 1
+  node = count == 1 and node.one or node.other
+  return interpolate(node, data)
+end
 
 -- public stuff
 
 function i18n.set(param1, param2, ...)
   assertPresent('set', 'first parameter', param1)
-  assertPresent('set', 'second parameter', param2)
+  assertPresentOrPlural('set', 'second parameter', param2)
 
   local args, length = contextualizeArgs(parseArgs(param1, param2, ...))
   local node = store
@@ -77,17 +95,18 @@ function i18n.get(param1, ...)
   assertPresent('get', 'first parameter', param1)
 
   local args, length = contextualizeArgs(parseArgs(param1, ...))
-  local node, i = store, 1
+  local lastParam    = args[length]
+  local node, i      = store, 1
 
   while i < length do
     node = node[args[i]]
     if not node then return nil end
-    if type(node) == 'string' then break end
+    if type(node) == 'string' or (node.one and node.other) then break end
     i = i + 1
   end
 
   if i < length then
-    return node:format(unpack(subArray(args, i+1, length)))
+    return interpolate(node, lastParam)
   else
     return node[args[length]]
   end
@@ -111,7 +130,7 @@ function i18n.reset()
   i18n.setContext()
 end
 
-setmetatable(i18n, {__call = function(_,...) return i18n.get(...) end})
+setmetatable(i18n, {__call = function(_, ...) return i18n.get(...) end})
 
 i18n.reset()
 

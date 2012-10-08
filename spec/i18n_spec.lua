@@ -27,8 +27,8 @@ describe('i18n', function()
     end)
 
     it('interpolates variables', function()
-      i18n.set('en.message', 'Hello %s, your score is %d')
-      assert_equal('Hello Vegeta, your score is 9001', i18n('en.message', 'Vegeta', 9001))
+      i18n.set('en.message', 'Hello %{name}, your score is %{score}')
+      assert_equal('Hello Vegeta, your score is 9001', i18n('en.message', {name = 'Vegeta', score = 9001}))
     end)
 
     it('checks that the first two parameters are non-empty strings', function()
@@ -36,6 +36,28 @@ describe('i18n', function()
       assert_error(function() i18n.set("",1) end)
       assert_error(function() i18n.set(1,1) end)
       assert_error(function() i18n.set() end)
+    end)
+
+    describe('when there is a count-type translation', function()
+      before(function()
+        i18n.set('a.message', {
+          one   = "Only one message.",
+          other = "%{count} messages."
+        })
+      end)
+
+      it('interpolates one correctly', function()
+        assert_equal("Only one message.", i18n('a.message', {count = 1}))
+      end)
+
+      it('interpolates many correctly', function()
+        assert_equal("2 messages.", i18n('a.message', {count = 2}))
+      end)
+
+      it('defaults to 1', function()
+        assert_equal("Only one message.", i18n('a.message'))
+      end)
+
     end)
   end)
 
