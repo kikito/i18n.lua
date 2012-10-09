@@ -75,23 +75,26 @@ local function localizeArgs(args, length)
   return appendArray(newArgs, newLength, args, length)
 end
 
+local function interpolateString(str, data)
+  return str:gsub("%%{(.-)}", function(w) return tostring(data[w]) end)
+end
 
-local function interpolate(node, data)
-  if type(node) == 'string' then
-    return node:gsub("%%{(.-)}", function(w) return tostring(data[w]) end)
-  end
-  -- else node is a pluralized form
+local function interpolatePluralTable(t, data)
+  assertPresentOrPlural('interpolatePluralTable', 't', t)
   data = data or {}
   local count = data.count or 1
-  assertPresentOrPlural('<private>interpolate', 'node', node)
-  node = count == 1 and node.one or node.other
-  return interpolate(node, data)
+  local term = count == 1 and t.one or t.other
+  return interpolateString(term, data)
+end
+
+local function interpolate(node, data)
+  return type(node) == 'string' and interpolateString(node, data) or interpolatePluralTable(node, data)
 end
 
 local function recursiveLoad(currentContext, data)
   local composedKey
   for k,v in pairs(data) do
-    composedKey = currentContext .. '.' .. tostring(k)
+    composedKey = (currentContext and (currentContext .. '.') or "") .. tostring(k)
     assertPresent('load', composedKey, k)
     assertPresentOrTable('load', composedKey, v)
     if type(v) == 'string' or isPluralTable(v) then
@@ -131,7 +134,7 @@ function i18n.translate(param1, ...)
   while i < length do
     node = node[args[i]]
     if not node then return nil end
-    if type(node) == 'string' or (node.one and node.other) then break end
+    if type(node) == 'string' or isPluralTable(node) then break end
     i = i + 1
   end
 
@@ -161,15 +164,7 @@ function i18n.reset()
 end
 
 function i18n.load(data)
-  for k,v in pairs(data) do
-    assertPresent('load', k, k)
-    assertPresentOrTable('load', k, v)
-    if type(v) == 'string' or isPluralTable(v) then
-      i18n.set(k, v)
-    else
-      recursiveLoad(k, v)
-    end
-  end
+  recursiveLoad(nil, data)
 end
 
 function i18n.loadFile(path)
