@@ -1,6 +1,6 @@
 local i18n = {}
 local store
-local context
+local locale
 
 -- private stuff
 
@@ -70,8 +70,8 @@ local function parseArgs(param1, param2, ...)
   return appendArray(args, length + 1, {...})
 end
 
-local function contextualizeArgs(args, length)
-  local newArgs, newLength = arrayCopy(context)
+local function localizeArgs(args, length)
+  local newArgs, newLength = arrayCopy(locale)
   return appendArray(newArgs, newLength, args, length)
 end
 
@@ -108,7 +108,7 @@ function i18n.set(param1, param2, ...)
   assertPresent('set', 'first parameter', param1)
   assertPresentOrPlural('set', 'second parameter', param2)
 
-  local args, length = contextualizeArgs(parseArgs(param1, param2, ...))
+  local args, length = parseArgs(param1, param2, ...)
   local node = store
 
   for i=1, length-2 do
@@ -124,7 +124,7 @@ end
 function i18n.translate(param1, ...)
   assertPresent('translate', 'first parameter', param1)
 
-  local args, length = contextualizeArgs(parseArgs(param1, ...))
+  local args, length = localizeArgs(parseArgs(param1, ...))
   local lastParam    = args[length]
   local node, i      = store, 1
 
@@ -144,15 +144,15 @@ end
 
 function i18n.setLocale(param1, ...)
   if param1 == nil then
-    context = {}
+    locale = {}
   else
     assertPresent('setLocale', 'first parameter', param1)
-    context = parseArgs(param1, ...)
+    locale = parseArgs(param1, ...)
   end
 end
 
 function i18n.getLocale()
-  return table.concat(context, '.')
+  return table.concat(locale, '.')
 end
 
 function i18n.reset()
