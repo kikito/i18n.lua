@@ -25,9 +25,10 @@ i18n.load({
 i18n.loadFile('path/to/your/files/en.lua') -- maybe load some more stuff from that file
 
 -- setting the translation context
-i18n.setContext('en')
+i18n.setLocale('en')
 
 -- getting translations
+i18n.translate('welcome') -- Welcome to this program
 i18n('welcome') -- Welcome to this program
 i18n('age_msg', {age = 18}) -- Your age is 18.
 i18n('phone_msg', {count = 1}) -- You have one new message.

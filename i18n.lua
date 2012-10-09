@@ -121,8 +121,8 @@ function i18n.set(param1, param2, ...)
   node[lastKey] = value
 end
 
-function i18n.get(param1, ...)
-  assertPresent('get', 'first parameter', param1)
+function i18n.translate(param1, ...)
+  assertPresent('translate', 'first parameter', param1)
 
   local args, length = contextualizeArgs(parseArgs(param1, ...))
   local lastParam    = args[length]
@@ -142,22 +142,22 @@ function i18n.get(param1, ...)
   end
 end
 
-function i18n.setContext(param1, ...)
+function i18n.setLocale(param1, ...)
   if param1 == nil then
     context = {}
   else
-    assertPresent('setContext', 'first parameter', param1)
+    assertPresent('setLocale', 'first parameter', param1)
     context = parseArgs(param1, ...)
   end
 end
 
-function i18n.getContext()
+function i18n.getLocale()
   return table.concat(context, '.')
 end
 
 function i18n.reset()
   store = {}
-  i18n.setContext()
+  i18n.setLocale()
 end
 
 function i18n.load(data)
@@ -178,7 +178,7 @@ function i18n.loadFile(path)
   i18n.load(data)
 end
 
-setmetatable(i18n, {__call = function(_, ...) return i18n.get(...) end})
+setmetatable(i18n, {__call = function(_, ...) return i18n.translate(...) end})
 
 i18n.reset()
 
