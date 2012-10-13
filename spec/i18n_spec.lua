@@ -1,3 +1,5 @@
+require 'spec.fixPackagePath'
+
 local i18n = require 'i18n'
 
 describe('i18n', function()
