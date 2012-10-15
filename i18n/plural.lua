@@ -16,6 +16,15 @@ local function assertNumber(functionName, paramName, value)
   end
 end
 
+local function words(str)
+  local result, length = {}, 0
+  str:gsub("%S+", function(word)
+    length = length + 1
+    result[length] = word
+  end)
+  return result
+end
+
 local function isInteger(n)
   return n == math.floor(n)
 end
@@ -38,12 +47,19 @@ local pluralization = {}
 local f1 = function(n)
   return n == 1 and "one" or "other"
 end
-pluralization[f1] = {'af'}
+pluralization[f1] = words([[
+  af asa bem bez bg bn brx ca cgg chr da de dv ee el
+  en eo es et eu fi fo fur fy gl gsw gu ha haw he is
+  it jmc kaj kcg kk kl ksb ku lb lg mas ml mn mr nah
+  nb nd ne nl nn no nr ny nyn om or pa pap ps pt rm
+  rof rwk saq seh sn so sq ss ssy st sv sw syr ta te
+  teo tig tk tn ts ur ve vun wae xh xog zu
+]])
 
 local f2 = function(n)
   return (n == 0 or n == 1) and "one" or "other"
 end
-pluralization[f2] = {'ak'}
+pluralization[f2] = words("ak am bh fil guw hi ln mg nso ti tl wa")
 
 local f3 = function(n)
   if not isInteger(n) then return 'other' end
@@ -59,7 +75,10 @@ pluralization[f3] = {'ar'}
 local f4 = function(n)
   return "other"
 end
-pluralization[f4] = {'az'}
+pluralization[f4] = words([[
+  az bm bo dz fa hu id ig ii ja jv ka kde kea km kn
+  ko lo ms my root sah ses sg th to tr vi wo yo zh
+]])
 
 local f5 = function(n)
   if not isInteger(n) then return 'other' end
@@ -69,7 +88,7 @@ local f5 = function(n)
          ((n_10 == 0 or between(n_10, 5, 9) or between(n_100, 11, 14)) and 'many') or
          'other'
 end
-pluralization[f5] = {'be'}
+pluralization[f5] = words('be bs hr ru sh sr uk')
 
 local f6 = function(n)
   if not isInteger(n) then return 'other' end
@@ -91,7 +110,7 @@ local f7 = function(n)
          ((n == 2 or n == 3 or n == 4) and 'few') or
          'other'
 end
-pluralization[f7] = {'cz'}
+pluralization[f7] = {'cz', 'sk'}
 
 local f8 = function(n)
   return (n == 0 and 'zero') or
@@ -107,7 +126,7 @@ local f9 = function(n)
   return (n >= 0 and n < 2 and 'one') or
          'other'
 end
-pluralization[f9] = {'ff'}
+pluralization[f9] = {'ff', 'fr', 'kab'}
 
 local f10 = function(n)
   return (n == 1 and 'one') or
@@ -138,7 +157,7 @@ local f13 = function(n)
          (n == 2 and 'two') or
          'other'
 end
-pluralization[f13] = {'iu'}
+pluralization[f13] = words('iu kw naq se sma smi smj smn sms')
 
 local f14 = function(n)
   return (n == 0 and 'zero') or
@@ -184,7 +203,7 @@ local f19 = function(n)
           and 'few') or
          'other'
 end
-pluralization[f19] = {'mo'}
+pluralization[f19] = {'mo', 'ro'}
 
 local f20 = function(n)
   if n == 1 then return 'one' end
