@@ -196,6 +196,37 @@ local f20 = function(n)
 end
 pluralization[f20] = {'mt'}
 
+local f21 = function(n)
+  if n == 1 then return 'one' end
+  if not isInteger(n) then return 'other' end
+  local n_10, n_100 = n % 10, n % 100
+
+  return ((between(n_10, 2, 4) and not between(n_100, 12, 14)) and 'few') or
+         ((n_10 == 0 or n_10 == 1 or between(n_10, 5, 9) or between(n_100, 12, 14)) and 'many') or
+         'other'
+end
+pluralization[f21] = {'pl'}
+
+local f22 = function(n)
+  return (n == 0 or n == 1) and 'one' or
+         'other'
+end
+pluralization[f22] = {'shi'}
+
+local f23 = function(n)
+  local n_100 = n % 100
+  return (n_100 == 1 and 'one') or
+         (n_100 == 2 and 'two') or
+         ((n_100 == 3 or n_100 == 4) and 'few') or
+         'other'
+end
+pluralization[f23] = {'sl'}
+
+local f24 = function(n)
+  return (isInteger(n) and (n == 0 or n == 1 or between(n, 11, 99)) and 'one')
+         or 'other'
+end
+pluralization[f24] = {'tzm'}
 
 local pluralizationFunctions = {}
 for f,locales in pairs(pluralization) do
