@@ -16,207 +16,142 @@ describe('i18n.plural', function()
 
     describe("When dealing with locales", function()
 
-      local function test_get(title, locale, results)
-        describe('When pluralizing ' .. title, function()
-          for n, result in pairs(results) do
-            it(('translates %s into %q'):format(n, result), function()
-              assert_equal(plural.get(locale, n), result)
+      local function test_get(title, locale, plural_forms)
+        for plural_form, numbers in pairs(plural_forms) do
+          numbers = type(numbers) == 'table' and numbers or {numbers}
+          for _,n in ipairs(numbers) do
+            it(('%s translates %s into %q'):format(title, n, plural_form), function()
+              assert_equal(plural.get(locale, n), plural_form)
             end)
           end
-        end)
+        end
       end
 
       test_get('Afrikaans (f1)', 'af', {
-        [1]   = 'one',
-        [0]   = 'other',
-        [0.5] = 'other',
-        [2]   = 'other'
+        one   = 1,
+        other = {0, 2, 999, 0.5, 1.2, 2.07}
       })
 
       test_get('Akan (f2)', 'ak', {
-        [1]   = 'one',
-        [0]   = 'one',
-        [0.5] = 'other',
-        [2]   = 'other'
+        one   = {0, 1},
+        other = {2, 999, 1.2, 2.07}
       })
 
       test_get('Arabic(f3)', 'ar', {
-        [0]   = 'zero',
-        [1]   = 'one',
-        [2]   = 'two',
-        [3]   = 'few',
-        [903] = 'few',
-        [111] = 'many',
-        [222] = 'many',
-        [0.5] = 'other'
+        zero  = 0,
+        one   = 1,
+        two   = 2,
+        few   = {3, 10, 103, 110, 203, 210},
+        many  = {11, 99, 111, 199},
+        other = {100, 102, 200, 202, 0.2, 1.07, 3.81}
       })
 
       test_get('Azerbaijani(f4)', 'az', {
-        [0]   = 'other',
-        [1]   = 'other',
-        [0.5] = 'other'
+        other = {0 , 1, 1000, 0.5}
       })
 
       test_get('Belarusian(f5)', 'be', {
-        [1]   = 'one',
-        [31]  = 'one',
-        [3]   = 'few',
-        [33]  = 'few',
-        [5]   = 'many',
-        [19]  = 'many',
-        [35]  = 'many',
-        [0.5] = 'other'
+        one   = {1, 21, 31, 41, 51},
+        few   = {2,4, 22, 24, 32, 34},
+        many  = {0, 5, 20, 25, 30, 35, 40},
+        other = {1.2, 2.07}
       })
 
-      test_get('Breton(f5)', 'br', {
-        [1]   = 'one',
-        [21]  = 'one',
-        [2]   = 'two',
-        [22]  = 'two',
-        [3]   = 'few',
-        [4]   = 'few',
-        [23]  = 'few',
-        [29]  = 'few',
-        [10000000] = 'many',
-        [0]   = 'other',
-        [0.5] = 'other'
+      test_get('Breton(f6)', 'br', {
+        one   = {1, 21, 31, 41, 51},
+        two   = {2, 22, 32, 42, 52},
+        few   = {3, 4, 9, 23, 24, 29},
+        many  = {1000000, 100000000},
+        other = {0, 5, 8, 10, 20, 25, 28, 1.2, 2.07}
       })
 
       test_get('Czech(f7)', 'cz', {
-        [1]   = 'one',
-        [2]   = 'few',
-        [4]   = 'few',
-        [5]   = 'other',
-        [0.5] = 'other'
+        one   = 1,
+        few   = {2, 3, 4},
+        other = {0, 5, 8, 10, 1.2, 2.07}
       })
 
       test_get('Welsh(f8)', 'cy', {
-        [0]   = 'zero',
-        [1]   = 'one',
-        [2]   = 'two',
-        [3]   = 'few',
-        [6]   = 'many',
-        [0.5] = 'other'
+        zero  = 0,
+        one   = 1,
+        two   = 2,
+        few   = 3,
+        many  = 6,
+        other = {4, 5, 7, 10, 101, 0.2, 1.07, 3.81}
       })
 
       test_get('Fulah(f9)', 'ff', {
-        [0]   = 'one',
-        [0.5] = 'one',
-        [1]   = 'one',
-        [1.5] = 'one',
-        [2]   = 'other'
+        one   = {0, 0.1, 0.5, 1, 1.5, 1.8},
+        other = {2, 3, 10, 20, 2.07}
       })
 
       test_get('Irish(f10)', 'ga', {
-        [1]   = 'one',
-        [2]   = 'two',
-        [3]   = 'few',
-        [6]   = 'few',
-        [0]   = 'other',
-        [-1]  = 'other',
-        [2.5] = 'other',
-        [100] = 'other'
+        one   = 1,
+        two   = 2,
+        few   = {3, 4, 5, 6},
+        many  = {7, 8, 9, 10},
+        other = {0, 11, 12, 20, 25, 100, 1.2, 2.07 }
       })
 
       test_get('Scottish Gaelic(f11)', 'gd', {
-        [1]   = 'one',
-        [11]  = 'one',
-        [2]   = 'two',
-        [12]  = 'two',
-        [3]   = 'few',
-        [10]  = 'few',
-        [13]  = 'few',
-        [19]  = 'few',
-        [0]   = 'other',
-        [-1]  = 'other',
-        [2.5] = 'other',
-        [100] = 'other'
+        one   = {1, 11},
+        two   = {2, 12},
+        few   = {3, 10, 13, 19},
+        other = {0, 20, 100, 1.2, 2.07}
       })
 
       test_get('Manx(12)', 'gv', {
-        [0]   = 'one',
-        [2]   = 'one',
-        [11]  = 'one',
-        [12]  = 'one',
-        [20]  = 'one',
-        [22]  = 'one',
-        [3]   = 'other',
-        [13]  = 'other',
-        [-2]  = 'other',
-        [1.5] = 'other'
+        one   = {0, 1, 2, 11, 12, 20, 21, 22},
+        other = {3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 1.5}
       })
 
       test_get('Inuktitut(f13)', 'iu', {
-        [1]   = 'one',
-        [2]   = 'two',
-        [0]   = 'other',
-        [-1]  = 'other',
-        [0.5] = 'other'
+        one   = 1,
+        two   = 2,
+        other = {0, 3, 10, 1.2, 2.07}
       })
 
       test_get('Colognian(f14)', 'ksh', {
-        [0]   = 'zero',
-        [1]   = 'one',
-        [2]   = 'other',
-        [-1]  = 'other',
-        [0.5] = 'other'
+        zero  = 0,
+        one   = 1,
+        other = {2, 3, 5, 10, 100, 2.3, 1.07}
       })
 
       test_get('Langi(f15)', 'lag', {
-        [0]   = 'zero',
-        [0.5] = 'one',
-        [1]   = 'one',
-        [1.5] = 'one',
-        [2]   = 'other',
-        [-1]  = 'other'
+        zero  = 0,
+        one   = {0.5, 1, 1.5, 1.97},
+        other = {2, 3, 10, 100, 2.10, -1}
       })
 
       test_get('Lithuanian(f16)', 'lt', {
-        [1]   = 'one',
-        [21]  = 'one',
-        [2]   = 'few',
-        [22]  = 'few',
-        [0]   = 'other'
+        one   = {1, 21, 31, 41, 51, 61},
+        few   = {2, 3, 4, 5, 6, 7, 8, 9, 22, 23, 24},
+        other = {0, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50, 1.5, 2.07}
       })
 
       test_get('Latvian(f17)', 'lv', {
-        [0]   = 'zero',
-        [1]   = 'one',
-        [21]  = 'one',
-        [2]   = 'other',
-        [0.5] = 'other'
+        zero  = 0,
+        one   = {1, 21, 31, 41, 51, 61},
+        other = {2, 5, 10, 15, 20, 22, 23, 30, 32, 33, 40, 0.2, 2.07}
       })
 
       test_get('Macedonian(f18)', 'mk', {
-        [1]   = 'one',
-        [21]  = 'one',
-        [0]   = 'other',
-        [2]   = 'other',
-        [0.5] = 'other'
+        one   = {1, 21, 31, 41, 51, 61},
+        other = {0, 2, 5, 10, 100, 0.2, 2.07}
       })
 
       test_get('Moldavian(f19)', 'mo', {
-        [1]   = 'one',
-        [2]   = 'few',
-        [0]   = 'few',
-        [19]  = 'few',
-        [101] = 'few',
-        [119] = 'few',
-        [20]  = 'other',
-        [2.7] = 'other'
+        one   = 1,
+        few   = {0, 2, 10, 15, 19, 101, 119, 201, 219},
+        other = {20, 100, 120, 200, 220, 300, 1.2, 2.07}
       })
 
       test_get('Maltese(f20)', 'mt', {
-        [1]   = 'one',
-        [2]   = 'few',
-        [0]   = 'few',
-        [19]  = 'many',
-        [11]  = 'many',
-        [119] = 'many',
-        [20]  = 'other',
-        [2.7] = 'other'
+        one   = 1,
+        few   = {0, 2, 5, 10, 102, 105, 110, 202, 205, 210},
+        many  = {11, 15, 19, 111, 115, 119, 211, 215, 219},
+        other = {20, 21, 50, 53, 101, 220, 221, 1.4, 11.61, 20.81}
       })
-
     end)
 
   end)
