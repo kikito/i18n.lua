@@ -16,6 +16,7 @@ local function assertNumber(functionName, paramName, value)
   end
 end
 
+-- transforms "foo bar baz" into {'foo','bar','baz'}
 local function words(str)
   local result, length = {}, 0
   str:gsub("%S+", function(word)
@@ -23,6 +24,11 @@ local function words(str)
     result[length] = word
   end)
   return result
+end
+
+-- transforms 'en-US' in 'en'
+local function stripLocaleVariants(localeName)
+  return localeName:match("[^%-]+")
 end
 
 local function isInteger(n)
@@ -39,6 +45,7 @@ local function inside(v, list)
   end
   return false
 end
+
 
 -- pluralization functions
 
@@ -258,9 +265,9 @@ function plural.get(locale, n)
   assertPresentString('i18n.plural.get', 'locale', locale)
   assertNumber('i18n.plural.get', 'n', n)
 
-  local f = pluralizationFunctions[locale]
+  locale = stripLocaleVariants(locale)
 
-  --print(locale, n, f(n))
+  local f = pluralizationFunctions[locale]
 
   return f(n)
 end
