@@ -1,6 +1,11 @@
 local i18n = {}
 local store
 local locale
+local defaultLocale = 'en'
+
+local path = (...):gsub("%.init$","")
+
+i18n.plural = require(path .. '.plural')
 
 -- private stuff
 
@@ -36,7 +41,7 @@ local function arrayCopy(source)
 end
 
 local function isPluralTable(t)
-  return type(t) == 'table' and type(t.one) == 'string' and type(t.other) == 'string'
+  return type(t) == 'table' and type(t.other) == 'string'
 end
 
 local function isPresent(str)
@@ -75,20 +80,25 @@ local function localizeArgs(args, length)
   return appendArray(newArgs, newLength, args, length)
 end
 
-local function interpolateString(str, data)
+local function interpolate(str, data)
   return str:gsub("%%{(.-)}", function(w) return tostring(data[w]) end)
 end
 
-local function interpolatePluralTable(t, data)
+local function pluralize(t, data)
   assertPresentOrPlural('interpolatePluralTable', 't', t)
   data = data or {}
   local count = data.count or 1
-  local term = count == 1 and t.one or t.other
-  return interpolateString(term, data)
+  local plural_form = i18n.plural.get(i18n.getLocale(), count)
+  return t[plural_form]
 end
 
-local function interpolate(node, data)
-  return type(node) == 'string' and interpolateString(node, data) or interpolatePluralTable(node, data)
+local function treatNode(node, data)
+  if type(node) == 'string' then
+    return interpolate(node, data)
+  elseif isPluralTable(node) then
+    return interpolate(pluralize(node, data), data)
+  end
+  return node
 end
 
 local function recursiveLoad(currentContext, data)
@@ -139,7 +149,7 @@ function i18n.translate(param1, ...)
   end
 
   if i < length then
-    return interpolate(node, lastParam)
+    return treatNode(node, lastParam)
   else
     return node[args[length]]
   end
@@ -160,7 +170,8 @@ end
 
 function i18n.reset()
   store = {}
-  i18n.setLocale()
+  i18n.plural.reset()
+  i18n.setLocale(defaultLocale)
 end
 
 function i18n.load(data)

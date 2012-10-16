@@ -4,33 +4,33 @@ local i18n = require 'i18n'
 
 describe('i18n', function()
 
-  before(i18n.reset)
+  before(function() i18n.reset() end)
 
   describe('translate/set', function()
     it('sets a value in the internal store', function()
-      i18n.set('foo','var')
+      i18n.set('en.foo','var')
       assert_equal('var', i18n('foo'))
     end)
 
     it('sets a hierarchy of values', function()
       i18n.set('en', 'message', 'hello!')
-      assert_equal('hello!', i18n('en', 'message'))
+      assert_equal('hello!', i18n('message'))
     end)
 
     it('splits keys via their dots', function()
-      i18n.set('en.message', 'hello!')
-      assert_equal('hello!', i18n('en', 'message'))
-      assert_equal('hello!', i18n('en.message'))
+      i18n.set('en.message.cool', 'hello!')
+      assert_equal('hello!', i18n('message.cool'))
+      assert_equal('hello!', i18n('message','cool'))
     end)
 
     it('only splits first param', function()
       i18n.set('en.foo', 'bar.baz', "A message in en.foo['bar.baz']")
-      assert_equal("A message in en.foo['bar.baz']", i18n('en','foo','bar.baz'))
+      assert_equal("A message in en.foo['bar.baz']", i18n('foo','bar.baz'))
     end)
 
     it('interpolates variables', function()
       i18n.set('en.message', 'Hello %{name}, your score is %{score}')
-      assert_equal('Hello Vegeta, your score is 9001', i18n('en.message', {name = 'Vegeta', score = 9001}))
+      assert_equal('Hello Vegeta, your score is 9001', i18n('message', {name = 'Vegeta', score = 9001}))
     end)
 
     it('checks that the first two parameters are non-empty strings', function()
@@ -41,23 +41,45 @@ describe('i18n', function()
     end)
 
     describe('when there is a count-type translation', function()
-      before(function()
-        i18n.set('a.message', {
-          one   = "Only one message.",
-          other = "%{count} messages."
-        })
+      describe('and the locale is the default one (english)', function()
+        before(function()
+          i18n.setLocale('en')
+          i18n.set('en.message', {
+            one   = "Only one message.",
+            other = "%{count} messages."
+          })
+        end)
+
+        it('pluralizes correctly', function()
+          assert_equal("Only one message.", i18n('message', {count = 1}))
+          assert_equal("2 messages.", i18n('message', {count = 2}))
+          assert_equal("0 messages.", i18n('message', {count = 0}))
+        end)
+
+        it('defaults to 1', function()
+          assert_equal("Only one message.", i18n('message'))
+        end)
       end)
 
-      it('interpolates one correctly', function()
-        assert_equal("Only one message.", i18n('a.message', {count = 1}))
-      end)
+      describe('and the locale is french', function()
+        before(function()
+          i18n.setLocale('fr')
+          i18n.set('fr.message', {
+            one   = "Une chose.",
+            other = "%{count} choses."
+          })
+        end)
 
-      it('interpolates many correctly', function()
-        assert_equal("2 messages.", i18n('a.message', {count = 2}))
-      end)
+        it('Ça marche', function()
+          assert_equal("Une chose.", i18n('message', {count = 1}))
+          assert_equal("Une chose.", i18n('message', {count = 1.5}))
+          assert_equal("2 choses.", i18n('message', {count = 2}))
+          assert_equal("Une chose.", i18n('message', {count = 0}))
+        end)
 
-      it('defaults to 1', function()
-        assert_equal("Only one message.", i18n('a.message'))
+        it('defaults to 1', function()
+          assert_equal("Une chose.", i18n('message'))
+        end)
       end)
 
     end)
@@ -84,27 +106,31 @@ describe('i18n', function()
         }
       })
 
-      assert_equal('Hello!', i18n('en.hello'))
-      assert_equal('Your weight: 5', i18n('en.inter', {weight = 5}))
-      assert_equal('One thing', i18n('en.plural', {count = 1}))
-      assert_equal('2 things', i18n('en.plural', {count = 2}))
-      assert_equal('¡Hola!', i18n('es.hello'))
-      assert_equal('Su peso: 5', i18n('es.inter', {weight = 5}))
-      assert_equal('Una cosa', i18n('es.plural', {count = 1}))
-      assert_equal('2 cosas', i18n('es.plural', {count = 2}))
+      assert_equal('Hello!', i18n('hello'))
+      assert_equal('Your weight: 5', i18n('inter', {weight = 5}))
+      assert_equal('One thing', i18n('plural', {count = 1}))
+      assert_equal('2 things', i18n('plural', {count = 2}))
+      i18n.setLocale('es')
+      assert_equal('¡Hola!', i18n('hello'))
+      assert_equal('Su peso: 5', i18n('inter', {weight = 5}))
+      assert_equal('Una cosa', i18n('plural', {count = 1}))
+      assert_equal('2 cosas', i18n('plural', {count = 2}))
     end)
   end)
 
   describe('loadFile', function()
     it("Loads a bunch of stuff", function()
       i18n.loadFile('spec/en.lua')
-      assert_equal('Hello!', i18n('en.hello'))
-      local balance = i18n('en.balance', {value = 0})
+      assert_equal('Hello!', i18n('hello'))
+      local balance = i18n('balance', {value = 0})
       assert_equal('Your account balance is 0.', balance)
     end)
   end)
 
   describe('set/getLocale', function()
+    it("defaults to en", function()
+      assert_equal('en', i18n.getLocale())
+    end)
     it("is split and parsed properly", function()
       i18n.setLocale('en', 'foo')
       assert_equal('en.foo', i18n.getLocale())
