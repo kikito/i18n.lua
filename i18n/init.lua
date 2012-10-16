@@ -107,7 +107,7 @@ local function recursiveLoad(currentContext, data)
     composedKey = (currentContext and (currentContext .. '.') or "") .. tostring(k)
     assertPresent('load', composedKey, k)
     assertPresentOrTable('load', composedKey, v)
-    if type(v) == 'string' or isPluralTable(v) then
+    if type(v) == 'string' then
       i18n.set(composedKey, v)
     else
       recursiveLoad(composedKey, v)
@@ -115,22 +115,22 @@ local function recursiveLoad(currentContext, data)
   end
 end
 
--- public stuff
+-- public interface
 
-function i18n.set(param1, param2, ...)
-  assertPresent('set', 'first parameter', param1)
-  assertPresentOrPlural('set', 'second parameter', param2)
+function i18n.set(key, value)
+  assertPresent('set', 'key', key)
+  assertPresentOrPlural('set', 'value', value)
 
-  local args, length = parseArgs(param1, param2, ...)
+  local path, length = dotSplit(key)
   local node = store
 
-  for i=1, length-2 do
-    key = args[i]
+  for i=1, length-1 do
+    key = path[i]
     node[key] = node[key] or {}
     node = node[key]
   end
 
-  local lastKey, value = args[length-1], args[length]
+  local lastKey = path[length]
   node[lastKey] = value
 end
 
