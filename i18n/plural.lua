@@ -1,5 +1,5 @@
 local plural = {}
-
+local defaultFunction = nil
 -- helper functions
 
 local function assertPresentString(functionName, paramName, value)
@@ -261,15 +261,27 @@ for f,locales in pairs(pluralization) do
   end
 end
 
+-- public interface
+
 function plural.get(locale, n)
   assertPresentString('i18n.plural.get', 'locale', locale)
   assertNumber('i18n.plural.get', 'n', n)
 
   locale = stripLocaleVariants(locale)
 
-  local f = pluralizationFunctions[locale]
+  local f = pluralizationFunctions[locale] or defaultFunction
 
   return f(n)
 end
+
+function plural.setDefaultFunction(f)
+  defaultFunction = f
+end
+
+function plural.reset()
+  defaultFunction = pluralizationFunctions['en']
+end
+
+plural.reset()
 
 return plural
