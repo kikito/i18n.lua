@@ -10,8 +10,7 @@ Description
 i18n = require 'i18n'
 
 -- loading stuff
-i18n.set('en', 'welcome', 'Welcome to this program')
-i18n.set('en.welcome', 'Welcome to this program') -- same as above
+i18n.set('en.welcome', 'Welcome to this program')
 i18n.load({
   en = {
     good_bye = "Good-bye!",

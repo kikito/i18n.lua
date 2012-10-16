@@ -76,7 +76,7 @@ local function parseArgs(param1, param2, ...)
 end
 
 local function localizeArgs(args, length)
-  local newArgs, newLength = arrayCopy(locale)
+  local newArgs, newLength = dotSplit(locale)
   return appendArray(newArgs, newLength, args, length)
 end
 
@@ -155,17 +155,13 @@ function i18n.translate(param1, ...)
   end
 end
 
-function i18n.setLocale(param1, ...)
-  if param1 == nil then
-    locale = {}
-  else
-    assertPresent('setLocale', 'first parameter', param1)
-    locale = parseArgs(param1, ...)
-  end
+function i18n.setLocale(newLocale)
+  assertPresent('setLocale', 'newLocale', newLocale)
+  locale = newLocale
 end
 
 function i18n.getLocale()
-  return table.concat(locale, '.')
+  return locale
 end
 
 function i18n.reset()
