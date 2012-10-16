@@ -15,7 +15,6 @@ describe('i18n', function()
     it('splits keys via their dots', function()
       i18n.set('en.message.cool', 'hello!')
       assert_equal('hello!', i18n('message.cool'))
-      assert_equal('hello!', i18n('message','cool'))
     end)
 
     it('interpolates variables', function()

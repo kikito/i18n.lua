@@ -75,9 +75,8 @@ local function parseArgs(param1, param2, ...)
   return appendArray(args, length + 1, {...})
 end
 
-local function localizeArgs(args, length)
-  local newArgs, newLength = dotSplit(locale)
-  return appendArray(newArgs, newLength, args, length)
+local function localize(key)
+  return locale .. "." .. key
 end
 
 local function interpolate(str, data)
@@ -134,25 +133,18 @@ function i18n.set(key, value)
   node[lastKey] = value
 end
 
-function i18n.translate(param1, ...)
-  assertPresent('translate', 'first parameter', param1)
+function i18n.translate(key, data)
+  assertPresent('translate', 'key', key)
 
-  local args, length = localizeArgs(parseArgs(param1, ...))
-  local lastParam    = args[length]
-  local node, i      = store, 1
+  local path, length = dotSplit(localize(key))
+  local node = store
 
-  while i < length do
-    node = node[args[i]]
+  for i=1, length do
+    node = node[path[i]]
     if not node then return nil end
-    if type(node) == 'string' or isPluralTable(node) then break end
-    i = i + 1
   end
 
-  if i < length then
-    return treatNode(node, lastParam)
-  else
-    return node[args[length]]
-  end
+  return treatNode(node, data)
 end
 
 function i18n.setLocale(newLocale)
