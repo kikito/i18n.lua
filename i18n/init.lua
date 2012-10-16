@@ -18,28 +18,6 @@ local function dotSplit(str)
   return fields, length
 end
 
-local function appendArray(destination, length, elements, elementsLength)
-  elementsLength = elementsLength or #elements
-  for i=1, elementsLength do
-    destination[length + i] = elements[i]
-  end
-  return destination, length + elementsLength
-end
-
-local function subArray(source, start, finish)
-  local result, length = {}, finish - start + 1
-  for i=1,length do
-    result[i] = source[start + i - 1]
-  end
-  return result
-end
-
-local function arrayCopy(source)
-  local result, length = {}, #source
-  for i=1,length do result[i] = source[i] end
-  return result, length
-end
-
 local function isPluralTable(t)
   return type(t) == 'table' and type(t.other) == 'string'
 end
@@ -67,16 +45,6 @@ local function assertPresentOrTable(functionName, paramName, value)
 
   local msg = "i18n.%s requires a non-empty string or table on its %s. Got %s (a %s value)."
   error(msg:format(functionName, paramName, tostring(value), type(value)))
-end
-
-local function parseArgs(param1, param2, ...)
-  local args, length = dotSplit(param1)
-  args[length + 1] = param2
-  return appendArray(args, length + 1, {...})
-end
-
-local function localize(key)
-  return locale .. "." .. key
 end
 
 local function interpolate(str, data)
@@ -136,7 +104,7 @@ end
 function i18n.translate(key, data)
   assertPresent('translate', 'key', key)
 
-  local path, length = dotSplit(localize(key))
+  local path, length = dotSplit(locale .. "." .. key)
   local node = store
 
   for i=1, length do
