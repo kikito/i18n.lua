@@ -222,7 +222,7 @@ describe('i18n.plural', function()
           plural.setDefaultFunction(function() return 'nothing' end)
         end)
 
-        test_get('non-existing languages use it', {'kingon', 'elvish'}, {
+        test_get('non-existing languages use it', {'klingon', 'elvish'}, {
           nothing = {0, 1, 1000, 0.5}
         })
 
@@ -233,7 +233,7 @@ describe('i18n.plural', function()
       end)
 
       describe("When a default function is not set", function()
-        test_get('non-existing languages use english', {'kingon', 'elvish'}, {
+        test_get('non-existing languages use english', {'klingon', 'elvish'}, {
           one   = 1,
           other = {0, 2, 1000, 0.5}
         })
