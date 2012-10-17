@@ -1,7 +1,9 @@
 local i18n = {}
 local store
 local locale
+local pluralizeFunction
 local defaultLocale = 'en'
+
 
 local path = (...):gsub("%.init$","")
 
@@ -47,15 +49,26 @@ local function assertPresentOrTable(functionName, paramName, value)
   error(msg:format(functionName, paramName, tostring(value), type(value)))
 end
 
+local function assertFunctionOrNil(functionName, paramName, value)
+  if value == nil or type(value) == 'function' then return end
+
+  local msg = "i18n.%s requires a function (or nil) on param %s. Got %s (a %s value)."
+  error(msg:format(functionName, paramName, tostring(value), type(value)))
+end
+
 local function interpolate(str, data)
   return str:gsub("%%{(.-)}", function(w) return tostring(data[w]) end)
+end
+
+local function defaultPluralizeFunction(count)
+  return i18n.plural.get(i18n.getLocale(), count)
 end
 
 local function pluralize(t, data)
   assertPresentOrPlural('interpolatePluralTable', 't', t)
   data = data or {}
   local count = data.count or 1
-  local plural_form = i18n.plural.get(i18n.getLocale(), count)
+  local plural_form = pluralizeFunction(count)
   return t[plural_form]
 end
 
@@ -115,9 +128,11 @@ function i18n.translate(key, data)
   return treatNode(node, data)
 end
 
-function i18n.setLocale(newLocale)
+function i18n.setLocale(newLocale, newPluralizeFunction)
   assertPresent('setLocale', 'newLocale', newLocale)
+  assertFunctionOrNil('setLocale', 'newPluralizeFunction', newPluralizeFunction)
   locale = newLocale
+  pluralizeFunction = newPluralizeFunction or defaultPluralizeFunction
 end
 
 function i18n.getLocale()

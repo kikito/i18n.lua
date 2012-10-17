@@ -143,6 +143,25 @@ describe('i18n', function()
       i18n.loadFile('spec/en.lua')
       assert_equal('Hello!', i18n('hello'))
     end)
+
+    describe("when a second parameter is passed", function()
+      it("throws an error if the second param is not a function", function()
+        assert_error(function() i18n.setLocale('wookie', 1) end)
+        assert_error(function() i18n.setLocale('wookie', 'foo') end)
+        assert_error(function() i18n.setLocale('wookie', {}) end)
+      end)
+      it("uses the provided function to calculate plurals", function()
+        local count = function(n)
+          return (n < 10 and "hahahaha") or "other"
+        end
+        i18n.setLocale('dracula', count)
+        i18n.load({dracula = { msg = { hahahaha = "Let's count to %{count}. hahahaha", other = "wha?" }}})
+
+        assert_equal("Let's count to 5. hahahaha", i18n('msg', {count = 5}))
+        assert_equal("Let's count to 3. hahahaha", i18n('msg', {count = 3}))
+        assert_equal("wha?", i18n('msg', {count = 11}))
+      end)
+    end)
   end)
 
 end)
