@@ -7,7 +7,8 @@ local defaultLocale = 'en'
 
 local path = (...):gsub("%.init$","")
 
-i18n.plural = require(path .. '.plural')
+local plural      = require(path .. '.plural')
+local interpolate = require(path .. '.interpolate')
 
 -- private stuff
 
@@ -56,12 +57,8 @@ local function assertFunctionOrNil(functionName, paramName, value)
   error(msg:format(functionName, paramName, tostring(value), type(value)))
 end
 
-local function interpolate(str, data)
-  return str:gsub("%%{(.-)}", function(w) return tostring(data[w]) end)
-end
-
 local function defaultPluralizeFunction(count)
-  return i18n.plural.get(i18n.getLocale(), count)
+  return plural.get(i18n.getLocale(), count)
 end
 
 local function pluralize(t, data)
@@ -141,7 +138,7 @@ end
 
 function i18n.reset()
   store = {}
-  i18n.plural.reset()
+  plural.reset()
   i18n.setLocale(defaultLocale)
 end
 
