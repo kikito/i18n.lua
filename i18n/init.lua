@@ -9,6 +9,7 @@ local path = (...):gsub("%.init$","")
 
 local plural      = require(path .. '.plural')
 local interpolate = require(path .. '.interpolate')
+local variants    = require(path .. '.variants')
 
 -- private stuff
 
@@ -58,7 +59,7 @@ local function assertFunctionOrNil(functionName, paramName, value)
 end
 
 local function defaultPluralizeFunction(count)
-  return plural.get(i18n.getLocale(), count)
+  return plural.get(variants.root(i18n.getLocale()), count)
 end
 
 local function pluralize(t, data)

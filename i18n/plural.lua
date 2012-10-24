@@ -26,11 +26,6 @@ local function words(str)
   return result
 end
 
--- transforms 'en-US' in 'en'
-local function stripLocaleVariants(localeName)
-  return localeName:match("[^%-]+")
-end
-
 local function isInteger(n)
   return n == math.floor(n)
 end
@@ -266,8 +261,6 @@ end
 function plural.get(locale, n)
   assertPresentString('i18n.plural.get', 'locale', locale)
   assertNumber('i18n.plural.get', 'n', n)
-
-  locale = stripLocaleVariants(locale)
 
   local f = pluralizationFunctions[locale] or defaultFunction
 

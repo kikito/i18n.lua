@@ -1,0 +1,31 @@
+local variants = require 'i18n.variants'
+
+describe("i18n.variants", function()
+  it("is a table", function()
+    assert_equal('table', type(variants))
+  end)
+
+  describe(".ancestry", function()
+    it("returns just the locale for simple locales", function()
+      local a = variants.ancestry('en')
+      assert_equal('en', a[1])
+      assert_equal(1, #a)
+    end)
+
+    it("returns self and parents for composite locales", function()
+      local a = variants.ancestry('en-US')
+      assert_equal('en-US', a[1])
+      assert_equal('en',    a[2])
+      assert_equal(2, #a)
+    end)
+  end)
+
+  describe(".root", function()
+    it("returns just the locale for simple locales", function()
+      assert_equal('en', variants.root('en'))
+    end)
+    it("returns the root for composite locales", function()
+      assert_equal('en', variants.root('en-US'))
+    end)
+  end)
+end)

@@ -204,18 +204,6 @@ describe('i18n.plural', function()
       other = {2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 101, 102, 0.5, 1.7}
     })
 
-    describe("When dealing with derived locales", function()
-      test_get('variants of zh', words([[
-      zh-Latn-CN-variant1-a-extend1-x-wadegile
-      zh-Latn-CN-variant1-a-extend1
-      zh-Latn-CN-variant1
-      zh-Latn-CN
-      zh-Latn
-      ]]), {
-        other = {0 , 1, 1000, 0.5}
-      })
-    end)
-
     describe("When the locale is not found", function()
       describe("When a default function is set", function()
         before(function()
