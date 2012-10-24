@@ -3,7 +3,7 @@ local store
 local locale
 local pluralizeFunction
 local defaultLocale = 'en'
-
+local fallbackLocale = defaultLocale
 
 local path = (...):gsub("%.init$","")
 
@@ -93,6 +93,18 @@ local function recursiveLoad(currentContext, data)
   end
 end
 
+local function localizedTranslate(key, locale, data)
+  local path, length = dotSplit(locale .. "." .. key)
+  local node = store
+
+  for i=1, length do
+    node = node[path[i]]
+    if not node then return nil end
+  end
+
+  return treatNode(node, data)
+end
+
 -- public interface
 
 function i18n.set(key, value)
@@ -115,15 +127,10 @@ end
 function i18n.translate(key, data)
   assertPresent('translate', 'key', key)
 
-  local path, length = dotSplit(locale .. "." .. key)
-  local node = store
+  local usedLocale = data and data.locale or locale
+  return localizedTranslate(key, usedLocale, data) or
+         localizedTranslate(key, fallbackLocale, data)
 
-  for i=1, length do
-    node = node[path[i]]
-    if not node then return nil end
-  end
-
-  return treatNode(node, data)
 end
 
 function i18n.setLocale(newLocale, newPluralizeFunction)
@@ -131,6 +138,10 @@ function i18n.setLocale(newLocale, newPluralizeFunction)
   assertFunctionOrNil('setLocale', 'newPluralizeFunction', newPluralizeFunction)
   locale = newLocale
   pluralizeFunction = newPluralizeFunction or defaultPluralizeFunction
+end
+
+function i18n.setFallbackLocale(newFallbackLocale)
+  fallbackLocale = newFallbackLocale
 end
 
 function i18n.getLocale()
@@ -141,6 +152,7 @@ function i18n.reset()
   store = {}
   plural.reset()
   i18n.setLocale(defaultLocale)
+  i18n.setFallbackLocale(defaultLocale)
 end
 
 function i18n.load(data)
