@@ -127,10 +127,16 @@ end
 function i18n.translate(key, data)
   assertPresent('translate', 'key', key)
 
-  local usedLocale = data and data.locale or locale
-  return localizedTranslate(key, usedLocale, data) or
-         localizedTranslate(key, fallbackLocale, data)
+  data = data or {}
+  local usedLocale = data.locale or locale
 
+  local fallbacks = variants.fallbacks(usedLocale, fallbackLocale)
+  for i=1, #fallbacks do
+    local value = localizedTranslate(key, fallbacks[i], data)
+    if value then return value end
+  end
+
+  return data.default
 end
 
 function i18n.setLocale(newLocale, newPluralizeFunction)
@@ -141,7 +147,12 @@ function i18n.setLocale(newLocale, newPluralizeFunction)
 end
 
 function i18n.setFallbackLocale(newFallbackLocale)
+  assertPresent('setFallbackLocale', 'newFallbackLocale', newFallbackLocale)
   fallbackLocale = newFallbackLocale
+end
+
+function i18n.getFallbackLocale()
+  return fallbackLocale
 end
 
 function i18n.getLocale()
