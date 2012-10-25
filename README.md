@@ -33,6 +33,7 @@ i18n('age_msg', {age = 18}) -- Your age is 18.
 i18n('phone_msg', {count = 1}) -- You have one new message.
 i18n('phone_msg', {count = 2}) -- You have 2 new messages.
 i18n('good_bye') -- Good-bye!
+
 ```
 
 Interpolation
@@ -50,9 +51,8 @@ i18n('lua', {1, 'message'}) -- Traditional Lua way: 1 message
 
 i18n.set('en.combined', 'Combined: %<name>.q %<age>.d %<age>.o')
 i18n('variables', {name='john', 'age'=10}) -- Combined: john 10 12k
+```
 
--- loading stuff
-i18n.set('en.welcome', 'welcome to this program')
 
 
 Pluralization
