@@ -1,4 +1,5 @@
 local i18n = {}
+
 local store
 local locale
 local pluralizeFunction
@@ -10,6 +11,8 @@ local path = (...):gsub("%.init$","")
 local plural      = require(path .. '.plural')
 local interpolate = require(path .. '.interpolate')
 local variants    = require(path .. '.variants')
+i18n._VERSION     = require(path .. '.version')
+
 
 -- private stuff
 
