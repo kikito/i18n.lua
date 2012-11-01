@@ -21,6 +21,7 @@ describe('i18n.plural', function()
             for _,n in ipairs(numbers) do
               it(('%s translates %s into %q'):format(locale, n, plural_form), function()
                 assert_equal(plural.get(locale, n), plural_form)
+                assert_equal(plural.get(locale, -n), plural_form)
               end)
             end
           end
@@ -147,7 +148,7 @@ describe('i18n.plural', function()
     test_get('f15', 'lag', {
       zero  = 0,
       one   = {0.5, 1, 1.5, 1.97},
-      other = {2, 3, 10, 100, 2.10, -1}
+      other = {2, 3, 10, 100, 2.10}
     })
 
     test_get('f16', 'lt', {

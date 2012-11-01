@@ -264,7 +264,7 @@ function plural.get(locale, n)
 
   local f = pluralizationFunctions[locale] or defaultFunction
 
-  return f(n)
+  return f(math.abs(n))
 end
 
 function plural.setDefaultFunction(f)
