@@ -11,7 +11,9 @@ local path = (...):gsub("%.init$","")
 local plural      = require(path .. '.plural')
 local interpolate = require(path .. '.interpolate')
 local variants    = require(path .. '.variants')
-i18n._VERSION     = require(path .. '.version')
+local version     = require(path .. '.version')
+
+i18n.plural, i18n.interpolate, i18n.variants, i18n.version, i18n._VERSION = plural, interpolate, variants, version, version
 
 
 -- private stuff
