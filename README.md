@@ -50,7 +50,7 @@ i18n.set('en.lua', 'Traditional Lua way: %d %s')
 i18n('lua', {1, 'message'}) -- Traditional Lua way: 1 message
 
 i18n.set('en.combined', 'Combined: %<name>.q %<age>.d %<age>.o')
-i18n('variables', {name='john', 'age'=10}) -- Combined: john 10 12k
+i18n('combined', {name='john', 'age'=10}) -- Combined: john 10 12k
 ```
 
 
