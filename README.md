@@ -1,6 +1,8 @@
 i18n.lua
 ========
 
+[![Build Status](https://travis-ci.org/kikito/i18n.lua.png?branch=master)](https://travis-ci.org/kikito/i18n.lua)
+
 A very complete i18n lib for Lua
 
 Description
