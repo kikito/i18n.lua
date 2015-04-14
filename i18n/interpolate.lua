@@ -1,38 +1,36 @@
-
 local unpack = unpack or table.unpack -- lua 5.2 compat
 
-local bracketDummy = "@@@@@@@@@{@@@@@@@@@"
-local ltDummy      = "@@@@@@@@@<@@@@@@@@@"
-
 -- matches a string of type %{age}
-local function interpolateVariables(str, vars)
-  return str:gsub("%%{%s*(.-)%s*}", function(key) return tostring(vars[key]) end)
+local function interpolate_value (string, variables)
+  return string:gsub ("(.?)%%{%s*(.-)%s*}",
+    function (previous, key)
+      if previous == "%" then
+        return
+      else
+        return previous .. tostring (variables [key])
+      end
+    end)
 end
 
 -- matches a string of type %<age>.d
-local function interpolateFormattedVariables(str, vars)
-  return str:gsub("%%<%s*(.-)%s*>%.([cdEefgGiouXxsq])", function(key, formatChar)
-    return string.format("%" .. formatChar, vars[key] or 'nil')
-  end)
+local function interpolate_field (string, variables)
+  return string:gsub ("(.?)%%<%s*(.-)%s*>%.([cdEefgGiouXxsq])",
+    function (previous, key, format)
+      if previous == "%" then
+        return
+      else
+        return previous .. string.format("%" .. format, variables [key] or "nil")
+      end
+    end)
 end
 
-local function escapeDoublePercent(str)
-  return str:gsub("%%%%{", bracketDummy):gsub("%%%%<", ltDummy)
-end
-
-local function unescapeDoublePercent(str)
-  return str:gsub(ltDummy, "%%<"):gsub(bracketDummy, "%%{")
-end
-
-
-local function interpolate(str, vars)
-  vars = vars or {}
-  str = escapeDoublePercent(str)
-  str = interpolateVariables(str, vars)
-  str = interpolateFormattedVariables(str, vars)
-  str = string.format(str, unpack(vars))
-  str = unescapeDoublePercent(str)
-  return str
+local function interpolate (pattern, variables)
+  variables    = variables or {}
+  local result = pattern
+  result       = interpolate_value (result, variables)
+  result       = interpolate_field (result, variables)
+  result       = string.format (result, unpack(variables))
+  return result
 end
 
 return interpolate
