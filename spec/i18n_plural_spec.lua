@@ -18,12 +18,12 @@ describe('i18n.plural', function()
         for _,locale in ipairs(locales) do
           for plural_form, numbers in pairs(plural_forms) do
             numbers = type(numbers) == 'table' and numbers or {numbers}
-            for _,n in ipairs(numbers) do
-              it(('%s translates %s into %q'):format(locale, n, plural_form), function()
+            it(('%s translates numbers into their correct plural form'):format(locale), function()
+              for _,n in ipairs(numbers) do
                 assert.equal(plural.get(locale, n), plural_form)
                 assert.equal(plural.get(locale, -n), plural_form)
-              end)
-            end
+              end
+            end)
           end
         end
       end)
