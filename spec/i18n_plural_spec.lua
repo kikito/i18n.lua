@@ -3,10 +3,10 @@ require 'spec.fixPackagePath'
 local plural = require 'i18n.plural'
 
 describe('i18n.plural', function()
-  before(plural.reset)
+  before_each(plural.reset)
 
   it("exists", function()
-    assert_equal('table', type(plural))
+    assert.equal('table', type(plural))
   end)
 
   describe('plural.get', function()
@@ -20,8 +20,8 @@ describe('i18n.plural', function()
             numbers = type(numbers) == 'table' and numbers or {numbers}
             for _,n in ipairs(numbers) do
               it(('%s translates %s into %q'):format(locale, n, plural_form), function()
-                assert_equal(plural.get(locale, n), plural_form)
-                assert_equal(plural.get(locale, -n), plural_form)
+                assert.equal(plural.get(locale, n), plural_form)
+                assert.equal(plural.get(locale, -n), plural_form)
               end)
             end
           end
@@ -39,9 +39,9 @@ describe('i18n.plural', function()
     end
 
     it('throws an error with the wrong parameters', function()
-      assert_error(function() plural.get() end)
-      assert_error(function() plural.get(1,1) end)
-      assert_error(function() plural.get('en', 'en') end)
+      assert.error(function() plural.get() end)
+      assert.error(function() plural.get(1,1) end)
+      assert.error(function() plural.get('en', 'en') end)
     end)
 
 
@@ -207,7 +207,7 @@ describe('i18n.plural', function()
 
     describe("When the locale is not found", function()
       describe("When a default function is set", function()
-        before(function()
+        before_each(function()
           plural.setDefaultFunction(function() return 'nothing' end)
         end)
 
