@@ -45,14 +45,7 @@ describe('i18n.plural', function()
     end)
 
 
-    test_get('f1', words([[
-      af asa bem bez bg bn brx ca cgg chr da de dv ee el
-      en eo es et eu fi fo fur fy gl gsw gu ha haw he is
-      it jmc kaj kcg kk kl ksb ku lb lg mas ml mn mr nah
-      nb nd ne nl nn no nr ny nyn om or pa pap ps pt rm
-      rof rwk saq seh sn so sq ss ssy st sv sw syr ta te
-      teo tig tk tn ts ur ve vun wae xh xog zu
-    ]]), {
+    test_get('f1', words([[ af en it nb rof teo ]]), {
       one   = 1,
       other = {0, 2, 999, 0.5, 1.2, 2.07}
     })
@@ -73,7 +66,6 @@ describe('i18n.plural', function()
 
     test_get('f4', words([[
       az bm bo dz fa hu id ig ii ja jv ka kde kea km kn
-      ko lo ms my root sah ses sg th to tr vi wo yo zh
     ]]), {
       other = {0 , 1, 1000, 0.5}
     })
