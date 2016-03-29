@@ -1,8 +1,8 @@
 package = "i18n"
-version = "0.9-2"
+version = "0.9.1-1"
 source = {
-  url = "https://github.com/kikito/i18n.lua/archive/v0.9.0.tar.gz",
-  dir = "i18n.lua-0.9.0"
+  url = "https://github.com/kikito/i18n.lua/archive/v0.9.1.tar.gz",
+  dir = "i18n.lua-0.9.1"
 }
 description = {
   summary = "A very complete internationalization library for Lua",
