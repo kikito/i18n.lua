@@ -2,6 +2,8 @@ i18n.lua
 ========
 
 [![Build Status](https://travis-ci.org/kikito/i18n.lua.png?branch=master)](https://travis-ci.org/kikito/i18n.lua)
+[![Coverage Status](https://coveralls.io/repos/github/kikito/i18n.lua/badge.svg?branch=master)](https://coveralls.io/github/kikito/i18n.lua?branch=master)
+
 
 A very complete i18n lib for Lua
 
