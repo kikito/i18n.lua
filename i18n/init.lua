@@ -6,12 +6,12 @@ local pluralizeFunction
 local defaultLocale = 'en'
 local fallbackLocale = defaultLocale
 
-local path = (...):gsub("%.init$","")
+local dirPath = (...):gsub("%.init$","")
 
-local plural      = require(path .. '.plural')
-local interpolate = require(path .. '.interpolate')
-local variants    = require(path .. '.variants')
-local version     = require(path .. '.version')
+local plural      = require(dirPath .. '.plural')
+local interpolate = require(dirPath .. '.interpolate')
+local variants    = require(dirPath .. '.variants')
+local version     = require(dirPath .. '.version')
 
 i18n.plural, i18n.interpolate, i18n.variants, i18n.version, i18n._VERSION = plural, interpolate, variants, version, version
 
@@ -98,8 +98,8 @@ local function recursiveLoad(currentContext, data)
   end
 end
 
-local function localizedTranslate(key, locale, data)
-  local path, length = dotSplit(locale .. "." .. key)
+local function localizedTranslate(key, loc, data)
+  local path, length = dotSplit(loc .. "." .. key)
   local node = store
 
   for i=1, length do
