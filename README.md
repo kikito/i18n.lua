@@ -16,7 +16,7 @@ i18n.set('en.welcome', 'welcome to this program')
 i18n.load({
   en = {
     good_bye = "good-bye!",
-    age_msg = "your age is %{age}."
+    age_msg = "your age is %{age}.",
     phone_msg = {
       one = "you have one new message.",
       other = "you have %{count} new messages."
