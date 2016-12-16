@@ -124,8 +124,7 @@ i18n.loadFile('path/to/your/project/i18n/fr.lua')
 The German language file 'de.lua' should read:
 
 ``` lua
-return
-{
+return {
   de = {
     good_bye = "Auf Wiedersehen!",
     age_msg = "Ihr Alter beträgt %{age}.",
@@ -140,8 +139,7 @@ return
 If desired, you can also store all translations in one single file (eg. 'translations.lua'):
 
 ``` lua
-return
-{
+return {
   de = {
     good_bye = "Auf Wiedersehen!",
     age_msg = "Ihr Alter beträgt %{age}.",
