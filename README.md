@@ -23,7 +23,9 @@ i18n.load({
     }
   }
 })
-i18n.loadFile('path/to/your/files/en.lua') -- maybe load some more stuff from that file
+i18n.loadFile('path/to/your/project/i18n/de.lua') -- load German language file
+i18n.loadFile('path/to/your/project/i18n/fr.lua') -- load French language file
+…         -- section 'using language files' below describes structure of files 
 
 -- setting the translation context
 i18n.setLocale('en') -- English is the default locale anyway
@@ -102,6 +104,61 @@ When a value is not found, the lib has several fallback mechanisms:
 * Otherwise the translation will return nil.
 
 The parents of a locale are found by splitting the locale by its hyphens. Other separation characters (spaces, underscores, etc) are not supported.
+
+Using language files
+====================
+
+It might be a good idea to store each translation in a different file. This is supported via the 'i18n.loadFile' directive: 
+
+``` lua
+…
+i18n.loadFile('path/to/your/project/i18n/de.lua')@@ -23,7 +23,9 @@ i18n.load({
+    }
+  }
+})
+i18n.loadFile('path/to/your/files/en.lua') -- maybe load some m
+i18n.loadFile('path/to/your/project/i18n/fr.lua')
+…
+```
+
+The German language file 'de.lua' should read:
+
+``` lua
+return {
+  de = {
+    good_bye = "Auf Wiedersehen!",
+    age_msg = "Ihr Alter beträgt %{age}.",
+    phone_msg = {
+      one = "Sie haben eine neue Nachricht.",
+      other = "Sie haben %{count} neue Nachrichten."
+    }
+  }
+}
+```
+
+If desired, you can also store all translations in one single file (eg. 'translations.lua'):
+
+``` lua
+return {
+  de = {
+    good_bye = "Auf Wiedersehen!",
+    age_msg = "Ihr Alter beträgt %{age}.",
+    phone_msg = {
+      one = "Sie haben eine neue Nachricht.",
+      other = "Sie haben %{count} neue Nachrichten."
+    }
+  },
+  fr = {
+    good_bye = "Au revoir !",
+    age_msg = "Vous avez %{age} ans.",
+    phone_msg = {
+      one = "Vous avez une noveau message.",
+      other = "Vous avez %{count} noveaux messages."
+    }
+  },
+  …  
+}
+```
 
 Specs
 =====
