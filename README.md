@@ -112,12 +112,9 @@ It might be a good idea to store each translation in a different file. This is s
 
 ``` lua
 …
-i18n.loadFile('path/to/your/project/i18n/de.lua')@@ -23,7 +23,9 @@ i18n.load({
-    }
-  }
-})
-i18n.loadFile('path/to/your/files/en.lua') -- maybe load some m
-i18n.loadFile('path/to/your/project/i18n/fr.lua')
+i18n.loadFile('path/to/your/project/i18n/de.lua') -- German translation
+i18n.loadFile('path/to/your/project/i18n/en.lua') -- English translation
+i18n.loadFile('path/to/your/project/i18n/fr.lua') -- French translation
 …
 ```
 
