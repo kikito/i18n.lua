@@ -7,6 +7,19 @@ local function interpolateValue(string, variables)
       if previous == "%" then
         return
       else
+        if key:match('%.') then
+          -- it's a table reference
+          local value = variables
+          for sub_key in key:gmatch('[^.]+') do
+            if value[sub_key] then
+              value = value[sub_key]
+            else
+              return previous .. tostring(variables [key])
+            end
+          end
+          return previous .. tostring(value)
+        end
+
         return previous .. tostring(variables [key])
       end
     end)
