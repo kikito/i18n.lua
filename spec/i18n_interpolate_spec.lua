@@ -11,6 +11,10 @@ describe('i18n.interpolate', function()
     assert.equal("My name is John, I am 13", interpolate("My name is %s, I am %d", {"John", 13}))
   end)
 
+  it("does not try to interpolate strings with percentages on it", function()
+    assert.equal("Pepe feels 100%!", interpolate("%{name} feels 100%!", {name = "Pepe"}))
+  end)
+
   describe("When interpolating with hash values", function()
 
     it("converts non-existing items in nil values without error", function()
