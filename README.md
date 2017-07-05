@@ -12,7 +12,7 @@ Description
 i18n = require 'i18n'
 
 -- loading stuff
-i18n.set('en.welcome', 'welcome to this program')
+i18n.set('welcome', 'welcome to this program')
 i18n.load({
   en = {
     good_bye = "good-bye!",
@@ -25,7 +25,7 @@ i18n.load({
 })
 i18n.loadFile('path/to/your/project/i18n/de.lua') -- load German language file
 i18n.loadFile('path/to/your/project/i18n/fr.lua') -- load French language file
-…         -- section 'using language files' below describes structure of files 
+…         -- section 'using language files' below describes structure of files
 
 -- setting the translation context
 i18n.setLocale('en') -- English is the default locale anyway
@@ -47,13 +47,13 @@ You can interpolate variables in 3 different ways:
 
 ``` lua
 -- the most usual one
-i18n.set('en.variables', 'Interpolating variables: %{name} %{age}')
+i18n.set('variables', 'Interpolating variables: %{name} %{age}')
 i18n('variables', {name='john', 'age'=10}) -- Interpolating variables: john 10
 
-i18n.set('en.lua', 'Traditional Lua way: %d %s')
+i18n.set('lua', 'Traditional Lua way: %d %s')
 i18n('lua', {1, 'message'}) -- Traditional Lua way: 1 message
 
-i18n.set('en.combined', 'Combined: %<name>.q %<age>.d %<age>.o')
+i18n.set('combined', 'Combined: %<name>.q %<age>.d %<age>.o')
 i18n('combined', {name='john', 'age'=10}) -- Combined: john 10 12k
 ```
 
@@ -108,7 +108,7 @@ The parents of a locale are found by splitting the locale by its hyphens. Other 
 Using language files
 ====================
 
-It might be a good idea to store each translation in a different file. This is supported via the 'i18n.loadFile' directive: 
+It might be a good idea to store each translation in a different file. This is supported via the 'i18n.loadFile' directive:
 
 ``` lua
 …
@@ -153,7 +153,7 @@ return {
       other = "Vous avez %{count} noveaux messages."
     }
   },
-  …  
+  …
 }
 ```
 
