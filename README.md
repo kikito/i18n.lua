@@ -62,7 +62,7 @@ i18n('combined', {name='john', 'age'=10}) -- Combined: john 10 12k
 Pluralization
 =============
 
-This lib implements the [unicode.org plural rules](http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_plural_rules.html). Just set the locale you want to use and it will deduce the appropiate pluralization rules:
+This lib implements the [unicode.org plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). Just set the locale you want to use and it will deduce the appropiate pluralization rules:
 
 ``` lua
 i18n = require 'i18n'
