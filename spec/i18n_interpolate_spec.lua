@@ -22,15 +22,18 @@ describe('i18n.interpolate', function()
     end)
 
     it("converts variables in stringifield values", function()
-      assert.equal("My name is John, I am 13", interpolate("My name is %{name}, I am %{age}", {name = "John", age = 13}))
+      assert.equal("My name is John, I am 13",
+                   interpolate("My name is %{name}, I am %{age}", {name = "John", age = 13}))
     end)
 
     it("ignores spaces inside the brackets", function()
-      assert.equal("My name is John, I am 13", interpolate("My name is %{ name }, I am %{ age }", {name = "John", age = 13}))
+      assert.equal("My name is John, I am 13",
+                   interpolate("My name is %{ name }, I am %{ age }", {name = "John", age = 13}))
     end)
 
     it("is escaped via double %%", function()
-      assert.equal("I am a %{blue} robot.", interpolate("I am a %%{blue} robot."))
+      assert.equal("I am a %{blue} robot.",
+                   interpolate("I am a %%{blue} robot."))
     end)
 
   end)
@@ -41,11 +44,13 @@ describe('i18n.interpolate', function()
     end)
 
     it("converts variables in stringifield values", function()
-      assert.equal("My name is John, I am 13", interpolate("My name is %<name>.s, I am %<age>.d", {name = "John", age = 13}))
+      assert.equal("My name is John, I am 13",
+                   interpolate("My name is %<name>.s, I am %<age>.d", {name = "John", age = 13}))
     end)
 
     it("ignores spaces inside the brackets", function()
-      assert.equal("My name is John, I am 13", interpolate("My name is %< name >.s, I am %< age >.d", {name = "John", age = 13}))
+      assert.equal("My name is John, I am 13",
+                   interpolate("My name is %< name >.s, I am %< age >.d", {name = "John", age = 13}))
     end)
 
     it("is escaped via double %%", function()
