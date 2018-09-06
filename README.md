@@ -48,13 +48,13 @@ You can interpolate variables in 3 different ways:
 ``` lua
 -- the most usual one
 i18n.set('variables', 'Interpolating variables: %{name} %{age}')
-i18n('variables', {name='john', 'age'=10}) -- Interpolating variables: john 10
+i18n('variables', {name='john', age=10}) -- Interpolating variables: john 10
 
 i18n.set('lua', 'Traditional Lua way: %d %s')
 i18n('lua', {1, 'message'}) -- Traditional Lua way: 1 message
 
 i18n.set('combined', 'Combined: %<name>.q %<age>.d %<age>.o')
-i18n('combined', {name='john', 'age'=10}) -- Combined: john 10 12k
+i18n('combined', {name='john', age=10}) -- Combined: john 10 12k
 ```
 
 
