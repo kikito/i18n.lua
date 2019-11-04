@@ -35,6 +35,10 @@ local function isPresent(str)
   return type(str) == 'string' and #str > 0
 end
 
+local function isArray(t)
+  return type(t) == 'table' and (#t > 0 or next(t) == nil)
+end
+
 local function assertPresent(functionName, paramName, value)
   if isPresent(value) then return end
 
@@ -43,7 +47,7 @@ local function assertPresent(functionName, paramName, value)
 end
 
 local function assertPresentOrPlural(functionName, paramName, value)
-  if isPresent(value) or isPluralTable(value) then return end
+  if isPresent(value) or isPluralTable(value) or isArray(value) then return end
 
   local msg = "i18n.%s requires a non-empty string or plural-form table on its %s. Got %s (a %s value)."
   error(msg:format(functionName, paramName, tostring(value), type(value)))
@@ -70,13 +74,24 @@ end
 local function pluralize(t, data)
   assertPresentOrPlural('interpolatePluralTable', 't', t)
   data = data or {}
-  local count = data.count or 1
+  local key
+  for _, v in pairs(t) do
+    key = interpolate.getInterpolationKey(v, data)
+    if key then
+      break
+    end
+  end
+  local count = data[key or "count"] or 1
   local plural_form = pluralizeFunction(count)
   return t[plural_form]
 end
 
 local function treatNode(node, data)
-  if type(node) == 'string' then
+  if isArray(node) then
+    for k,v in ipairs(node) do
+      node[k] = treatNode(v, data)
+    end
+  elseif type(node) == 'string' then
     return interpolate(node, data)
   elseif isPluralTable(node) then
     return interpolate(pluralize(node, data), data)

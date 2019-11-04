@@ -153,6 +153,72 @@ describe('i18n', function()
     end)
   end)
 
+  describe('arrays', function()
+    it("Load supports arrays of strings", function()
+      i18n.set('en.array', {"one", "two", "three"})
+      assert.same({"one", "two", "three"},i18n('array'))
+    end)
+
+    it("Arrays respect languages", function()
+      i18n.set('en.array', {"one", "two", "three"})
+      i18n.set('fr.array', {"un", "deux", "trois"})
+      i18n.setLocale('fr')
+      assert.same({"un", "deux", "trois"},i18n('array'))
+    end)
+
+    it("Variables in array elements can be interpolated", function()
+      i18n.set('en.suede', {"%{count} for the count", "%{show} for the show", "%{ready} to make ready", "go!"})
+      assert.same({
+        "one for the count",
+        "two for the show",
+        "three to make ready",
+        "go!"
+      },i18n('suede',{count = "one", show = "two", ready = "three"}))
+    end)
+
+    it("Variables in array elements can be pluralized", function()
+      i18n.set('en.safe', {"Welcome to Apature!", {
+        one = "%{count} unfortunate retirement today!",
+        other = "%{count} unfortunate retirements today!"}
+      })
+      assert.same({
+        "Welcome to Apature!",
+        "1 unfortunate retirement today!",
+      },i18n('safe',{count = 1}))
+    end)
+
+    it("Variables in array elements can be pluralized independently", function()
+      i18n.set('en.safe', {
+        "Welcome to Apature!", {
+          one = "%{count} unfortunate retirement today!",
+          other = "%{count} unfortunate retirements today!"
+        }, {
+          one = "only %{test} test subject active!",
+          other = "%{test} test subjects active"
+        }
+      })
+      assert.same({
+        "Welcome to Apature!",
+        "10 unfortunate retirements today!",
+        "only 1 test subject active!"
+      },i18n('safe',{count = 10, test = 1}))
+    end)
+
+    it("Without field or value names in string. Pluralisation assumes count as default key", function()
+      i18n.set('en.safe', {
+        "Welcome to Apature!", {
+          one = "It's great!",
+          other = "It's mostly safe!"
+        }
+      })
+      assert.same({
+        "Welcome to Apature!",
+        "It's mostly safe!",
+     },i18n('safe',{count = 2}))
+    end)
+
+  end)
+
   describe('set/getFallbackLocale', function()
     it("defaults to en", function()
       assert.equal('en', i18n.getFallbackLocale())
