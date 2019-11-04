@@ -105,7 +105,7 @@ local function recursiveLoad(currentContext, data)
     composedKey = (currentContext and (currentContext .. '.') or "") .. tostring(k)
     assertPresent('load', composedKey, k)
     assertPresentOrTable('load', composedKey, v)
-    if type(v) == 'string' then
+    if type(v) == 'string' or isArray(v) then
       i18n.set(composedKey, v)
     else
       recursiveLoad(composedKey, v)

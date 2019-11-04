@@ -150,6 +150,7 @@ describe('i18n', function()
       assert.equal('Hello!', i18n('hello'))
       local balance = i18n('balance', {value = 0})
       assert.equal('Your account balance is 0.', balance)
+      assert.same({"one", "two", "three"}, i18n('array'))
     end)
   end)
 
