@@ -177,6 +177,23 @@ describe('i18n', function()
       },i18n('suede',{count = "one", show = "two", ready = "three"}))
     end)
 
+    it("Interpolation produces different results when called with different values", function()
+      i18n.set('en.suede', {"%{count} for the count", "%{show} for the show", "%{ready} to make ready", "go!"})
+      assert.same({
+        "one for the count",
+        "two for the show",
+        "three to make ready",
+        "go!"
+      },i18n('suede',{count = "one", show = "two", ready = "three"}))
+
+      assert.same({
+        "a for the count",
+        "b for the show",
+        "c to make ready",
+        "go!"
+      },i18n('suede',{count = "a", show = "b", ready = "c"}))
+    end)
+
     it("Variables in array elements can be pluralized", function()
       i18n.set('en.safe', {"Welcome to Apature!", {
         one = "%{count} unfortunate retirement today!",
@@ -217,7 +234,6 @@ describe('i18n', function()
         "It's mostly safe!",
      },i18n('safe',{count = 2}))
     end)
-
   end)
 
   describe('set/getFallbackLocale', function()

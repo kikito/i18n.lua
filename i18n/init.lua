@@ -88,7 +88,9 @@ end
 
 local function treatNode(node, data)
   if isArray(node) then
-    for k,v in ipairs(node) do
+    local iter = {ipairs(node)}
+    node = {}
+    for k,v in unpack(iter) do
       node[k] = treatNode(v, data)
     end
   elseif type(node) == 'string' then
