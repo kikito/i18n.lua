@@ -4,7 +4,7 @@ local interpolate = require 'i18n.interpolate'
 
 describe('i18n.interpolate', function()
   it("exists", function()
-    assert.equal('function', type(interpolate))
+    assert.equal('table', type(interpolate))
   end)
 
   it("performs standard interpolation via string.format", function()
