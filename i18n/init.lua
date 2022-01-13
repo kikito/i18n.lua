@@ -64,7 +64,11 @@ local function assertFunctionOrNil(functionName, paramName, value)
 end
 
 local function defaultPluralizeFunction(count)
-  return plural.get(variants.root(i18n.getLocale()), count)
+  local locale = i18n.getLocale()
+  if type(locale) == "table" then
+      locale = locale[1]
+  end
+  return plural.get(variants.root(locale), count)
 end
 
 local function pluralize(t, data)
@@ -110,6 +114,13 @@ local function localizedTranslate(key, loc, data)
   return treatNode(node, data)
 end
 
+local function concat(arr1, arr2)
+  for i = 1, #arr2 do
+    arr1[#arr1 + i] = arr2[i]
+  end
+  return arr1
+end
+
 -- public interface
 
 function i18n.set(key, value)
@@ -133,9 +144,19 @@ function i18n.translate(key, data)
   assertPresent('translate', 'key', key)
 
   data = data or {}
-  local usedLocale = data.locale or locale
+  local usedLocales
+  local locales = locale
+  if type(locale) == 'string' then
+    locales = {locale}
+  end
+  if isPresent(data.locale) then
+    usedLocales = concat({data.locale}, locales)
+  else
+    usedLocales = concat({}, locales)
+  end
 
-  local fallbacks = variants.fallbacks(usedLocale, fallbackLocale)
+  table.insert(usedLocales, fallbackLocale)
+  local fallbacks = variants.fallbacks(usedLocales)
   for i=1, #fallbacks do
     local value = localizedTranslate(key, fallbacks[i], data)
     if value then return value end
@@ -145,7 +166,7 @@ function i18n.translate(key, data)
 end
 
 function i18n.setLocale(newLocale, newPluralizeFunction)
-  assertPresent('setLocale', 'newLocale', newLocale)
+  assertPresentOrTable('setLocale', 'newLocale', newLocale)
   assertFunctionOrNil('setLocale', 'newPluralizeFunction', newPluralizeFunction)
   locale = newLocale
   pluralizeFunction = newPluralizeFunction or defaultPluralizeFunction
