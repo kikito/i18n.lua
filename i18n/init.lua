@@ -141,7 +141,9 @@ function i18n.translate(key, data)
     if value then return value end
   end
 
-  return data.default
+  if data.default then
+      return interpolate(data.default, data)
+  end
 end
 
 function i18n.setLocale(newLocale, newPluralizeFunction)
