@@ -2,7 +2,7 @@ local i18n = {}
 
 local store
 local locale
-local pluralizeFunction
+local customPluralizeFunction
 local defaultLocale = 'en'
 local fallbackLocale = defaultLocale
 
@@ -63,23 +63,28 @@ local function assertFunctionOrNil(functionName, paramName, value)
   error(msg:format(functionName, paramName, tostring(value), type(value)))
 end
 
-local function defaultPluralizeFunction(count)
-  return plural.get(variants.root(i18n.getLocale()), count)
+local function defaultPluralizeFunction(locale, count)
+  return plural.get(variants.root(locale), count)
 end
 
-local function pluralize(t, data)
+local function pluralize(t, locale, data)
   assertPresentOrPlural('interpolatePluralTable', 't', t)
   data = data or {}
   local count = data.count or 1
-  local plural_form = pluralizeFunction(count)
+  local plural_form
+  if customPluralizeFunction then
+    plural_form = customPluralizeFunction(count)
+  else
+    plural_form = defaultPluralizeFunction(locale, count)
+  end
   return t[plural_form]
 end
 
-local function treatNode(node, data)
+local function treatNode(node, loc, data)
   if type(node) == 'string' then
     return interpolate(node, data)
   elseif isPluralTable(node) then
-    return interpolate(pluralize(node, data), data)
+    return interpolate(pluralize(node, loc, data), data)
   end
   return node
 end
@@ -107,7 +112,7 @@ local function localizedTranslate(key, loc, data)
     if not node then return nil end
   end
 
-  return treatNode(node, data)
+  return treatNode(node, loc, data)
 end
 
 -- public interface
@@ -148,7 +153,7 @@ function i18n.setLocale(newLocale, newPluralizeFunction)
   assertPresent('setLocale', 'newLocale', newLocale)
   assertFunctionOrNil('setLocale', 'newPluralizeFunction', newPluralizeFunction)
   locale = newLocale
-  pluralizeFunction = newPluralizeFunction or defaultPluralizeFunction
+  customPluralizeFunction = newPluralizeFunction
 end
 
 function i18n.setFallbackLocale(newFallbackLocale)
