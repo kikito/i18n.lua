@@ -91,20 +91,21 @@ describe('i18n', function()
         before_each(function()
           i18n.setLocale('fr')
           i18n.set('fr.message', {
-            one   = "Une chose.",
+            one   = "%{count} chose.",
             other = "%{count} choses."
           })
         end)
 
         it('Ça marche', function()
-          assert.equal("Une chose.", i18n('message', {count = 1}))
-          assert.equal("Une chose.", i18n('message', {count = 1.5}))
+          assert.equal("1 chose.", i18n('message', {count = 1}))
+          -- Note: should actually be '1,5 chose.'
+          assert.equal("1.5 chose.", i18n('message', {count = 1.5}))
           assert.equal("2 choses.", i18n('message', {count = 2}))
-          assert.equal("Une chose.", i18n('message', {count = 0}))
+          assert.equal("0 chose.", i18n('message', {count = 0}))
         end)
 
         it('defaults to 1', function()
-          assert.equal("Une chose.", i18n('message'))
+          assert.equal("1 chose.", i18n('message'))
         end)
       end)
 
