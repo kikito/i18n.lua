@@ -64,6 +64,10 @@ describe('i18n', function()
         assert.equal('bonjour', i18n('msg', {default='bonjour'}))
       end)
 
+      it('interpolates the default parameter, if given', function()
+        assert.equal('bonjour world', i18n('msg', {default='bonjour %{who}', who="world"}))
+      end)
+
     end)
 
     describe('when there is a count-type translation', function()
