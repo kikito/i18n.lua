@@ -31,19 +31,24 @@ function variants.root(locale)
   return locale:match("[^%-]+")
 end
 
-function variants.fallbacks(locale, fallbackLocale)
-  if locale == fallbackLocale or
-     variants.isParent(fallbackLocale, locale) then
-     return variants.ancestry(locale)
-  end
-  if variants.isParent(locale, fallbackLocale) then
-    return variants.ancestry(fallbackLocale)
+function variants.fallbacks(locales)
+  local in_seen = {}
+  local out_seen = {}
+  local ancestry, length = {}, 0
+  for index, value in ipairs(locales) do
+      if not in_seen[value] then
+          in_seen[value] = true
+          local ancestry1, length1 = variants.ancestry(value)
+          for i = 1, length1 do
+              if not out_seen[ancestry1[i]] then
+                  out_seen[ancestry1[i]] = true
+                  ancestry[#ancestry + 1] = ancestry1[i]
+              end
+          end
+      end
   end
 
-  local ancestry1, length1 = variants.ancestry(locale)
-  local ancestry2, length2 = variants.ancestry(fallbackLocale)
-
-  return concat(ancestry1, length1, ancestry2, length2)
+  return ancestry, length
 end
 
 return variants

@@ -105,6 +105,8 @@ When a value is not found, the lib has several fallback mechanisms:
 
 The parents of a locale are found by splitting the locale by its hyphens. Other separation characters (spaces, underscores, etc) are not supported.
 
+You can also pass a list of locales to `setLocale` to provide multiple options before the fallback locale is used.
+
 Using language files
 ====================
 
